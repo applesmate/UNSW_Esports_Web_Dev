@@ -1,11 +1,12 @@
 import postgres from 'postgres'
 
-const sql = postgres('postgres://username:password@host:port/database', {
+const sql = postgres({
     host    : 'webdev-db.postgres.database.azure.com',
     port    : 5432,
     database: 'projectCepheus',
     username: 'webdev',
-    password: 'ef75&q5nDruJH#b6'
+    password: 'ef75&q5nDruJH#b6',
+    ssl: true
 }) // will use psql environment variables
 
 /**
