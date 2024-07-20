@@ -1,4 +1,4 @@
 type Player = {
-    PlayerID: string,
-    PlayerUserName: string
+    playerid: string,
+    playerusername: string
 };

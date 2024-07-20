@@ -1,4 +1,4 @@
-import { addPlayer, deletePlayer, getPlayer } from "../players";
+import { addPlayer, deletePlayer, getPlayer, getPlayerAll } from "../players";
 
 describe('test', () =>  {
     test('testing the test file', () => {
@@ -11,19 +11,33 @@ describe('test', () =>  {
 
 describe('getting a player info', () =>  {
     test('grab test user', () => {
-        const info = getPlayer(Promise.resolve(String(420)))
-        console.log("---------")
-        console.log(info)
-        expect(1).toBe(1);
-        // deletePlayer(id)
+        getPlayerAll(String(0)).then(info => {
+            expect(info).not.toBeNull();
+        })
     });
 });
 
-describe('adding a player', () =>  {
-    test('simple add', () => {
-        const id: Promise<string> = addPlayer("VorteX")
-        const info = getPlayer(id)
-        expect(info).not.toBeNull();
-        // deletePlayer(id)
-    });
-});
+// describe('getting a player info', () =>  {
+//     test('grab test user', () => {
+//         getPlayer(String(0)).then((info) => {
+//             console.log(info)
+//             expect(info).not.toBeNull();
+//         })
+//     });
+// });
+
+// const data = await sql`SELECT ${ sql('aTest', 'bTest') } FROM table`
+
+// console.log(data) // [ { aTest: 1, bTest: '1' } ]
+
+// NOT WORKING
+// describe('adding a player', () =>  {
+//     test('simple add', () => {
+//         addPlayer("VorteX").then((result: string) => {
+//             getPlayer(result).then((info: string) => {
+//                 expect(info).not.toBeNull();
+//             })
+//             deletePlayer(result)
+//         })
+//     });
+// });

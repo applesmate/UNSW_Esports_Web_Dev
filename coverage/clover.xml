@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1721045482349" clover="3.2.0">
-  <project timestamp="1721045482349" name="All files">
-    <metrics statements="16" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1" elements="19" coveredelements="8" complexity="0" loc="16" ncloc="16" packages="2" files="2" classes="2"/>
+<coverage generated="1721471622052" clover="3.2.0">
+  <project timestamp="1721471622052" name="All files">
+    <metrics statements="18" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="1" elements="24" coveredelements="7" complexity="0" loc="18" ncloc="18" packages="2" files="2" classes="2"/>
     <package name="UNSW_Esports_Web_Dev">
       <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="db.ts" path="C:\Users\Owner\Documents\Git\ESports\UNSW_Esports_Web_Dev\db.ts">
@@ -12,22 +12,24 @@
       </file>
     </package>
     <package name="UNSW_Esports_Web_Dev.src">
-      <metrics statements="13" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
+      <metrics statements="15" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="1"/>
       <file name="players.ts" path="C:\Users\Owner\Documents\Git\ESports\UNSW_Esports_Web_Dev\src\players.ts">
-        <metrics statements="13" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
+        <metrics statements="15" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="10" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="19" count="1" type="stmt"/>
-        <line num="20" count="1" type="stmt"/>
-        <line num="28" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
         <line num="29" count="0" type="stmt"/>
-        <line num="33" count="0" type="stmt"/>
-        <line num="34" count="0" type="stmt"/>
-        <line num="38" count="0" type="stmt"/>
-        <line num="41" count="1" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="58" count="1" type="stmt"/>
       </file>
     </package>
   </project>

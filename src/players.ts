@@ -3,43 +3,56 @@ import sql from '../db'
 // look at https://www.w3schools.com/js/js_promise.asp for help with promises
 
 async function addPlayer(playerName: string): Promise<string> {
-    let playerID : string = String("P-" + Date.now())
+    let playerid: string = "P-1"// + Date.now())
     const player: Player = {
-        PlayerID: 'P-1',
-        PlayerUserName: 'DKC'
+        playerid: playerid,
+        playerusername: String("DKC")
     }
 
     await sql`
-        insert into players ${
-            sql(player, 'PlayerID', 'PlayerUserName')
+        insert into devschema.players ${
+            sql(player, "playerid", "playerusername")
         }
     `
-    return playerID
+    return playerid
 }
 
-async function getPlayer(playerID: Promise<string>) {
-    const playerIDstr = String(playerID)
-    const playerInfo = await sql`
+async function getPlayerAll(playerID: string) {
+    await sql`
         SELECT
-            playerID
+            *
         FROM
-            players
+            devschema.players
         WHERE
-            playerID == ${playerIDstr}
-    `
-        // .then(function(value) {
-        //     return playerInfo
-        // })
-    return playerInfo
+            playerid = ${playerID}
+    `.then((playerInfo) => {
+        console.log(playerInfo)
+        return playerInfo
+    })
 }
 
-async function deletePlayer(playerID: Promise<string>) {
-    const playerIDstr = String(playerID)
+async function getPlayer(playerID: string) {
+    await sql`
+        SELECT
+            playerid
+        FROM
+            devschema.players
+        WHERE
+            playerid = ${playerID}
+    `.then((playerInfo) => {
+        //console.log(playerInfo)
+        return playerInfo
+    })
+}
+
+async function deletePlayer(playerID: string) {
+    const playerIDstr: string = String(playerID)
+    console.log("------------")
     const players = await sql`
-        delete from players
-        where PlayerID == ${playerIDstr}
+        delete from devschema.players
+        where playerid = ${playerIDstr}
     `
     console.log(playerID + " deleted")
 }
 
-export { addPlayer, deletePlayer, getPlayer };
+export { addPlayer, deletePlayer, getPlayer, getPlayerAll };

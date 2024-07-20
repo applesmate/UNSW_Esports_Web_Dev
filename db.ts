@@ -9,6 +9,7 @@ const sql = postgres({
     ssl: true
 }) // will use psql environment variables
 
+// REMEMBER TO SET "SSL" TO TRUE
 /**
  * Host: webdev-db.postgres.database.azure.com
     DB: projectCepheus
