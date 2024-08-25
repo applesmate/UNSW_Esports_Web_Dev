@@ -1,6 +1,11 @@
 import { addPlayer, deletePlayer, getPlayerID, getPlayerAll } from "../players";
 import sql from '../../db';
 
+afterAll(done => {
+    // Closing the DB connection allows Jest to exit successfully.
+    done()
+});
+
 describe('test', () =>  {
     test('testing the test file', () => {
         expect(1+1).toBe(2);
@@ -45,10 +50,10 @@ describe('adding a player', () =>  {
     test('simple add', async () => {
         const result = await addPlayer("VorteX", "1")
         console.log(result)
-        const info = await getPlayerAll(String(result))
+        const info = await getPlayerID(String(result))
         console.log(info)
         expect(info.playerusername).toBe("VorteX");
         deletePlayer(result)
-        expect(getPlayerID(String(result))).not.toBe(result);
+        expect(getPlayerID(String(result))).not.toBe("VorteX");
     });
 });

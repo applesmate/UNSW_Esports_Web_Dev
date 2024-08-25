@@ -29,7 +29,7 @@ async function addPlayer(playerName: string, teamid: string) {
  */
 async function getPlayerAll(playerID: string) {
     
-    const player = await sql<Player[]>`
+    const playerInfo = await sql<Player[]>`
         SELECT
             *
         FROM
@@ -37,12 +37,9 @@ async function getPlayerAll(playerID: string) {
         WHERE
             playerid = ${playerID}
     `
-    // .then((playerInfo) => {
-    //     console.log(playerInfo[0])
-    //     return playerInfo[0]
-    // })
-    console.log(player)
-    return player[0]
+    
+    // await sql.end();
+    return playerInfo.length != 0 ? playerInfo[0] : "error";
 }
 
 /**
