@@ -18,17 +18,17 @@ async function addPlayer(playerName: string): Promise<string> {
 }
 
 async function getPlayerAll(playerID: string) {
-    await sql`
+    const playerInfo = await sql`
         SELECT
             *
         FROM
             devschema.players
         WHERE
             playerid = ${playerID}
-    `.then((playerInfo) => {
-        console.log(playerInfo)
-        return playerInfo
-    })
+    `
+    
+    await sql.end();
+    return playerInfo.length != 0 ? playerInfo[0] : "error";
 }
 
 async function getPlayer(playerID: string) {

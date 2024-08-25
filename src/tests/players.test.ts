@@ -1,5 +1,10 @@
 import { addPlayer, deletePlayer, getPlayer, getPlayerAll } from "../players";
 
+afterAll(done => {
+    // Closing the DB connection allows Jest to exit successfully.
+    done()
+});
+
 describe('test', () =>  {
     test('testing the test file', () => {
         expect(1+1).toBe(2);
@@ -10,10 +15,9 @@ describe('test', () =>  {
 // neither of these tests work
 
 describe('getting a player info', () =>  {
-    test('grab test user', () => {
-        getPlayerAll(String(0)).then(info => {
-            expect(info).not.toBeNull();
-        })
+    test('grab test user', async () => {
+        const info  = await getPlayerAll('1');
+        expect(info).toEqual({"playerdesc": "Cool", "playerid": 0, "playerrealname": "Damon", "playerusername": "DKC", "teamid": 0});
     });
 });
 
