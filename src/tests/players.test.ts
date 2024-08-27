@@ -1,4 +1,4 @@
-import { addPlayer, deletePlayer, getPlayerID, getPlayerAll } from "../players";
+import { addPlayer, deletePlayer, getPlayerID, getPlayerAll, updatePlayerUserName, updatePlayerRealName, updatePlayerDescription } from "../players";
 import sql from '../../db';
 
 afterAll(done => {
@@ -17,43 +17,72 @@ describe('test', () =>  {
 
 describe('getting all player info', () =>  {
     test('grab test user', async () => {
-        const data = await getPlayerAll(String(0));
-        console.log(data)
+        const data = await getPlayerAll("0");
+        //console.log(data)
         expect(data).toStrictEqual({
             playerid: "0",
             teamid: "0",
             playerusername: 'DKC',
             playerdesc: 'Cool',
-            playerrealname: 'Damon'
+            playerrealname: 'Damon',
+            playerpassword: 'password'
         });
     });
 });
 
-// describe('getting a player info', () =>  {
-//     test('grab test user', async () => {
-//         const data = await getPlayer(String(0));
-//         // expect(data).toBe([{
-
-//         // }]);
-//         expect(data).not.toBeNull();
-//         const data2 = await getPlayer(String(0));
-//         expect(data2).not.toBeNull();
-//     });
-// });
-
-// const data = await sql`SELECT ${ sql('aTest', 'bTest') } FROM table`
-
-// console.log(data) // [ { aTest: 1, bTest: '1' } ]
-
-// NOT WORKING
-describe('adding a player', () =>  {
+describe('adding a player and deleting them', () =>  {
     test('simple add', async () => {
-        const result = await addPlayer("VorteX", "1")
-        console.log(result)
+        const result = await addPlayer("VorteX", "password")
+
         const info = await getPlayerID(String(result))
-        console.log(info)
-        expect(info.playerusername).toBe("VorteX");
+
+        expect(info).not.toBeNull();
+
         deletePlayer(result)
-        expect(getPlayerID(String(result))).not.toBe("VorteX");
+
+        const deletedID = await getPlayerID(String(result))
+        expect(deletedID).toBe("-1");
+
+        const deletedInfo = await getPlayerAll(String(result))
+        expect(deletedInfo.playerid).toBe("-1");
     });
 });
+
+describe('updating player details in the database', () => {
+    test('username', async () => {
+        const result = await addPlayer("VorteX", "password")
+        
+        const info = await getPlayerID(String(result))
+        expect(info).not.toBe("-1");
+
+        const newName = await updatePlayerUserName(String(result), "winter")
+        // console.log(newName)
+        expect(newName).toBe("winter");
+
+        deletePlayer(result)
+    });
+    test('realname', async () => {
+        const result = await addPlayer("VorteX", "password")
+        
+        const info = await getPlayerID(String(result))
+        expect(info).not.toBe("-1");
+
+        const newName = await updatePlayerRealName(String(result), "Bruno")
+        // console.log(newName)
+        expect(newName).toBe("Bruno");
+
+        deletePlayer(result)
+    });
+    test('description', async () => {
+        const result = await addPlayer("VorteX", "password")
+        
+        const info = await getPlayerID(String(result))
+        expect(info).not.toBe("-1");
+
+        const newDesc = await updatePlayerDescription(String(result), "the real buzz lightyear")
+        // console.log(newName)
+        expect(newDesc).toBe("the real buzz lightyear");
+
+        deletePlayer(result)
+    });
+})
