@@ -1,101 +1,156 @@
 import sql from '../db'
+import { Team, TeamFull, TeamPlayerPair } from './types'
 
-async function addTeam(teamName: string, teamPlayers: Array<string>) {
+async function addTeam(teamName: string, teamPlayers: Array<string>, teamDesc: string): Promise<string> {
+    // teamPlayers is filled with player IDs
+    
     if (teamPlayers.length == 0) {
         console.log("A team must have at least one player!")
-        return "err"
+        return '-1'
     }
-    
-    let players = String(teamPlayers)
-    let teamID : string = String("T-" + Date.now())
+
+    let teamID: string = String(Date.now())
+
+    const team: Team = {
+        teamid: teamID,
+        teamname: teamName,
+        teamdesc: teamDesc,
+    }
 
     const dupe = await sql`
         select
-            teamName
-        from teams
-        where teamName like (${teamName})
+            teamname
+        from 
+            devschema.teams
+        where teamid like (${teamID})
     `
-    if (dupe) {
+    if (!(typeof dupe[0] == 'undefined' || Object.keys(dupe[0]).length == 0)) {
         console.log("dupe is not empty")
-        return "err"
+        return '-1'
     }
-    const teams = await sql`
-        insert into teams
-            (TeamID, TeamName, TeamPlayers)
-        values
-            (${ teamID }, ${ teamName }, ${ players })
+
+    await sql`
+        insert into devschema.teams ${ 
+            sql(team, 'teamid', 'teamname', 'teamdesc')
+        }
     `
+    for (const i in teamPlayers) {
+        // console.log(teamPlayers[i])
+        const pair: TeamPlayerPair = {
+            teamid: teamID,
+            playerid: teamPlayers[i]
+        }
+        await sql`
+            insert into devschema.teamplayers ${ 
+                sql(pair, 'teamid', 'playerid')
+            }
+        `
+    }
+
     return teamID
 }
 
-async function deleteTeam(teamName: string) {
+async function deleteTeam(teamID: string) {
+    // console.log("deleted team " + teamName)
+    await sql`
+        delete from devschema.teams
+        where teamid = ${teamID}
+    `
 
-    const teams = await sql`
-        delete from teams
-        where teamName == ${teamName}
+    await sql`
+        delete from devschema.teamplayers
+        where teamid = ${teamID}
     `
 }
 
-// async function getTeamInfo(teamName) {
-//     const teamInfo = await sql`
-//         SELECT
-//             info
-//         FROM
-//             Teams
-//         WHERE
-//             teamName like ${ teamName }
-//     `
-//     return teamInfo
-// }
+async function getTeamInfo(teamID: string): Promise<TeamFull> {
+    const teamInfo = await sql`
+        SELECT
+            *
+        FROM
+            devschema.teams
+        WHERE
+            teamid = ${teamID}
+    `
+    // console.log(teamInfo)
+    if (typeof teamInfo[0] == 'undefined' || Object.keys(teamInfo[0]).length == 0) {
+        const errorInfo: TeamFull = {
+            teamid: '-1',
+            teamname: '',
+            teamdesc: '',
+            teamplayers: [],
+        }
+        return errorInfo
+    }
 
-// async function getTeamPlayer(teamName, teamPlayerName) {
-//     const teamPlayer = await sql`
-//         SELECT
-//             player
-//         FROM
-//             Teams
-//         WHERE
-//             teamName like ${ teamName }
-//             and player like ${ teamPlayerName }
-//     `
-//     return teamPlayer
-// }
+    // console.log(JSON.stringify(teamID))
 
-// async function getTeamResults(teamName) {
-//     // matches get added to team db as well as general match db
-//     // simply list all results recorded
-//     // pagination if results get too long?
-//     const teamResults = await sql`
-//         SELECT
-//             results
-//         FROM
-//             Teams
-//         WHERE
-//             teamNames like ${ teamName }
-//             ORDER by date DESC
-//     `
-//     return teamResults
-// }
+    const teamPlayers = await sql`
+        SELECT
+            playerusername
+        FROM
+            devschema.players as p
+        INNER JOIN
+            devschema.teamplayers as tp on p.playerid = tp.playerid
+        INNER JOIN
+            devschema.teams as t on tp.teamid = t.teamid
+        WHERE 
+            t.teamid = (${teamID})
+    `
+    // p.currteamid = t.teamid and t.teamid = ${teamID}
+    const returnedPlayers: Array<string> = []
+    // console.log(teamPlayers)
+    for (const i in teamPlayers) {
+        // console.log(teamPlayers[i].playerusername)
+        returnedPlayers.push(teamPlayers[i].playerusername)
+    }
+    console.log(returnedPlayers)
+    return {
+        teamid: teamInfo[0].teamid,
+        teamplayers: returnedPlayers,
+        teamname: teamInfo[0].teamname,
+        teamdesc: teamInfo[0].teamdesc,
+    }
+}
 
-// async function updateTeamRoster(teamName, rosterArray) {
-//     const teamResults = await sql`
-//         INSERT
-//             ...
-//     `
-//     return "Team Updated"
-// }
+async function updateTeamPlayers(teamID: string, rosterArray: Array<string>) {
+    // delete all ids present with team
+    await sql`
+        DELETE FROM
+            devschema.teamplayers
+        WHERE
+            teamid = ${teamID}
+    `
+    // add new ids present in the roster
+    for (const id in rosterArray) {
+        const pair = {
+            teamid: teamID,
+            playerid: rosterArray[id]
+        }
+        await sql`
+            INSERT INTO
+                devschema.teamplayers
+            ${
+                sql(pair, "teamid", "playerid")
+            }
+        `
+    }
+    
+    return "Team Updated"
+}
 
-// async function getTeamTournaments(teamName) {
-//     const teamTournaments = await sql`
-//         SELECT
-//             tournaments
-//         FROM
-//             Teams
-//         WHERE
-//             teamNames like ${ teamName }
-//             ORDER by date DESC
-//     `
-//     return teamTournaments
-// }
+async function updateTeamInfo(teamID: string, teamArray: Team) {
+    // delete all ids present with team
+    await sql`
+        UPDATE
+            devschema.teams
+        SET
+            teamdesc = ${teamArray.teamdesc}, teamname = ${teamArray.teamname}
+        WHERE
+            teamid = ${teamID}
+    `
+    
+    return "Team Updated"
+}
 
-export { addTeam, deleteTeam };
+export { addTeam, deleteTeam, getTeamInfo, updateTeamPlayers };

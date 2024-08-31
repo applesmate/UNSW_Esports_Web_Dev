@@ -9,19 +9,19 @@ let salt = crypto.randomBytes(16).toString('hex');
 
 async function addPlayer(playerName: string, password: string) {
     let playerid: string = String(Date.now())
-    let playerusername: string = "VorteX"
+    let playerusername: string = playerName
     const encryptedPassword = crypto.createHash('sha256').update(password + salt).digest('hex');
     const player: Player = {
         playerid: playerid,
         playerusername: playerusername, 
-        teamid: "",
-        playerdesc: "",
-        playerrealname: "",
+        currteamid: '',
+        playerdesc: '',
+        playerrealname: '',
         playerpassword: encryptedPassword
     }
     await sql`
         insert into devschema.players ${
-            sql(player, "playerusername", "playerdesc", "playerrealname", "playerid", "teamid", "playerpassword")
+            sql(player, "playerusername", "playerdesc", "playerrealname", "playerid", "currteamid", "playerpassword")
         }
     `
 
@@ -46,12 +46,12 @@ async function getPlayerAll(playerID: string): Promise<Player> {
     
     if (playerInfo.length == 0) {
         const errorInfo: Player = {
-            playerusername: "",
-            playerdesc: "",
-            playerrealname: "",
-            playerid: "-1",
-            teamid: "",
-            playerpassword: ""
+            playerusername: '',
+            playerdesc: '',
+            playerrealname: '',
+            playerid: '-1',
+            currteamid: '',
+            playerpassword: ''
         }
         return errorInfo
     }
@@ -83,8 +83,13 @@ async function getPlayerID(playerID: string) {
 
 async function deletePlayer(playerID: string) {
     //console.log(playerID + " deleted")
-    const players = await sql`
+    await sql`
         delete from devschema.players
+        where playerid = ${playerID}
+    `
+
+    await sql`
+        delete from devschema.teamplayers
         where playerid = ${playerID}
     `
 }
@@ -96,7 +101,7 @@ async function updatePlayerUserName(playerID: string, newName: string) {
         playerdesc: info.playerdesc,
         playerrealname: info.playerrealname,
         playerid: playerID,
-        teamid: info.teamid,
+        currteamid: info.currteamid,
         playerpassword: info.playerpassword
     }
     const updatedPlayer = await sql`
@@ -104,7 +109,7 @@ async function updatePlayerUserName(playerID: string, newName: string) {
             devschema.players
         SET
             ${
-                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'teamid', 'playerpassword')
+                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'currteamid', 'playerpassword')
             }
         WHERE
             playerid = ${playerID}
@@ -119,7 +124,7 @@ async function updatePlayerRealName(playerID: string, newName: string) {
         playerdesc: info.playerdesc,
         playerrealname: newName,
         playerid: playerID,
-        teamid: info.teamid,
+        currteamid: info.currteamid,
         playerpassword: info.playerpassword
     }
     const updatedPlayer = await sql`
@@ -127,7 +132,7 @@ async function updatePlayerRealName(playerID: string, newName: string) {
             devschema.players
         SET
             ${
-                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'teamid', 'playerpassword')
+                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'currteamid', 'playerpassword')
             }
         WHERE
             playerid = ${playerID}
@@ -142,7 +147,7 @@ async function updatePlayerDescription(playerID: string, newDesc: string) {
         playerdesc: newDesc,
         playerrealname: info.playerrealname,
         playerid: playerID,
-        teamid: info.teamid,
+        currteamid: info.currteamid,
         playerpassword: info.playerpassword
     }
     await sql`
@@ -150,7 +155,7 @@ async function updatePlayerDescription(playerID: string, newDesc: string) {
             devschema.players
         SET
             ${
-                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'teamid', 'playerpassword')
+                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'currteamid', 'playerpassword')
             }
         WHERE
             playerid = ${playerID}
@@ -158,4 +163,27 @@ async function updatePlayerDescription(playerID: string, newDesc: string) {
     return newDesc
 }
 
-export { addPlayer, deletePlayer, getPlayerID, getPlayerAll, updatePlayerUserName, updatePlayerDescription, updatePlayerRealName };
+async function updatePlayerPassword(playerID: string, newPassword: string) {
+    const info = await getPlayerAll(playerID)
+    const player = {
+        playerusername: info.playerusername,
+        playerdesc: info.playerdesc,
+        playerrealname: info.playerrealname,
+        playerid: playerID,
+        currteamid: info.currteamid,
+        playerpassword: newPassword
+    }
+    await sql`
+        UPDATE
+            devschema.players
+        SET
+            ${
+                sql(player, 'playerusername', 'playerdesc', 'playerrealname', 'playerid', 'currteamid', 'playerpassword')
+            }
+        WHERE
+            playerid = ${playerID}
+    `
+    return newPassword
+}
+
+export { addPlayer, deletePlayer, getPlayerID, getPlayerAll, updatePlayerUserName, updatePlayerDescription, updatePlayerRealName, updatePlayerPassword };

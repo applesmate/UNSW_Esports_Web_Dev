@@ -21,7 +21,7 @@ describe('getting all player info', () =>  {
         //console.log(data)
         expect(data).toStrictEqual({
             playerid: "0",
-            teamid: "0",
+            currteamid: "0",
             playerusername: 'DKC',
             playerdesc: 'Cool',
             playerrealname: 'Damon',
